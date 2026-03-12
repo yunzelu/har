@@ -16,3 +16,5 @@ rendered_frames*
 .vscode
 
 yolov8n-pose_openvino_model
+
+*.csv

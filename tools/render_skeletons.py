@@ -51,19 +51,23 @@ def parse_args():
     parser.add_argument('--video-height', type=int, default=1080, help='Height of the video frame for the canvas.')
     parser.add_argument('--sample-step', type=int, default=1, help='Render every N-th frame.')
     parser.add_argument('--show-timestamp', action='store_true', help='Show timestamp on the frames.')
+    parser.add_argument('--conf-threshold', type=float, default=0.6, help='Confidence threshold for rendering keypoints (0.0 to 1.0).')
     return parser.parse_args()
 
-def draw_skeleton(frame, keypoints, connections, color):
-    """Draws a skeleton on a frame."""
-    for i, (x, y) in enumerate(keypoints):
-        if x > 0 and y > 0:
+def draw_skeleton(frame, keypoints, connections, color, threshold):
+    """Draws a skeleton on a frame, filtering by confidence."""
+    # Draw keypoints
+    for x, y, c in keypoints:
+        if c > threshold and x > 0 and y > 0:
             cv2.circle(frame, (int(x), int(y)), 5, color, -1)
 
+    # Draw connections
     for (start_idx, end_idx) in connections:
-        start_point = keypoints[start_idx]
-        end_point = keypoints[end_idx]
-        if start_point[0] > 0 and start_point[1] > 0 and end_point[0] > 0 and end_point[1] > 0:
-            cv2.line(frame, (int(start_point[0]), int(start_point[1])), (int(end_point[0]), int(end_point[1])), color, 2)
+        start_x, start_y, start_c = keypoints[start_idx]
+        end_x, end_y, end_c = keypoints[end_idx]
+
+        if start_c > threshold and end_c > threshold and start_x > 0 and start_y > 0 and end_x > 0 and end_y > 0:
+            cv2.line(frame, (int(start_x), int(start_y)), (int(end_x), int(end_y)), color, 2)
     return frame
 
 def main():
@@ -93,15 +97,12 @@ def main():
         (0, 255, 255), (128, 0, 128), (128, 128, 0), (0, 128, 128)
     ]
 
-    # Group by a frame identifier, assuming 'Timestamp' can identify a frame
-    # We'll use a combination of Timestamp and UnixTime to be more precise if needed
-    # For this implementation, let's assume rows with the same Timestamp form a single frame.
-    
-    unique_timestamps = df['Timestamp'].unique()
+    # Group by a frame identifier, assuming 'UnixTime' can identify a frame 
+    unique_unixtimes = df['UnixTime'].unique()
 
-    for i in range(0, len(unique_timestamps), args.sample_step):
-        ts = unique_timestamps[i]
-        frame_df = df[df['Timestamp'] == ts]
+    for i in range(0, len(unique_unixtimes), args.sample_step):
+        uts = unique_unixtimes[i]
+        frame_df = df[df['UnixTime'] == uts]
         
         if frame_df.empty:
             continue
@@ -119,20 +120,20 @@ def main():
             for kp_idx in range(len(KEYPOINT_DICT)):
                 x = row.get(f'KP{kp_idx}_X', 0)
                 y = row.get(f'KP{kp_idx}_Y', 0)
-                keypoints.append((x, y))
+                c = row.get(f'KP{kp_idx}_C', 0)
+                keypoints.append((x, y, c))
             
-            keypoints = np.array(keypoints)
             person_id = int(row.get('PersonID', 0))
             color = colors[person_id % len(colors)] # Cycle through colors based on PersonID
             
-            draw_skeleton(frame, keypoints, SKELETON_CONNECTIONS, color)
+            draw_skeleton(frame, keypoints, SKELETON_CONNECTIONS, color, args.conf_threshold)
 
-        # The frame_number should be based on the timestamp order to have a consistent sequence
-        frame_number = np.where(unique_timestamps == ts)[0][0]
+        # The frame_number should be based on the unixtime order to have a consistent sequence
+        frame_number = np.where(unique_unixtimes == uts)[0][0]
         output_path = os.path.join(args.output_dir, f"frame_{frame_number:06d}.png")
         cv2.imwrite(output_path, frame)
 
-    rendered_frames_count = len(range(0, len(unique_timestamps), args.sample_step))
+    rendered_frames_count = len(range(0, len(unique_unixtimes), args.sample_step))
     print(f"Rendered {rendered_frames_count} frames to {args.output_dir}")
 
 
