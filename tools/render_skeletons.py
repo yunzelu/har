@@ -46,77 +46,95 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Render skeleton frames from a CSV file.")
     parser.add_argument('--csv-path', type=str, required=True, help='Path to the input CSV file.')
     parser.add_argument('--output-dir', type=str, required=True, help='Directory to save the rendered frames.')
-    parser.add_argument('--person-id', type=int, default=1, help='ID of the person to render.')
+    parser.add_argument('--person-id', type=int, default=None, help='ID of the person to render. Renders all persons if not specified.')
     parser.add_argument('--video-width', type=int, default=1920, help='Width of the video frame for the canvas.')
     parser.add_argument('--video-height', type=int, default=1080, help='Height of the video frame for the canvas.')
     parser.add_argument('--sample-step', type=int, default=1, help='Render every N-th frame.')
+    parser.add_argument('--show-timestamp', action='store_true', help='Show timestamp on the frames.')
     return parser.parse_args()
 
-def draw_skeleton(frame, keypoints, connections):
+def draw_skeleton(frame, keypoints, connections, color):
     """Draws a skeleton on a frame."""
     for i, (x, y) in enumerate(keypoints):
         if x > 0 and y > 0:
-            cv2.circle(frame, (int(x), int(y)), 5, (0, 255, 0), -1)
+            cv2.circle(frame, (int(x), int(y)), 5, color, -1)
 
     for (start_idx, end_idx) in connections:
         start_point = keypoints[start_idx]
         end_point = keypoints[end_idx]
         if start_point[0] > 0 and start_point[1] > 0 and end_point[0] > 0 and end_point[1] > 0:
-            cv2.line(frame, (int(start_point[0]), int(start_point[1])), (int(end_point[0]), int(end_point[1])), (255, 0, 0), 2)
+            cv2.line(frame, (int(start_point[0]), int(start_point[1])), (int(end_point[0]), int(end_point[1])), color, 2)
     return frame
 
 def main():
     args = parse_args()
-
-    # Create output directory if it doesn't exist
     os.makedirs(args.output_dir, exist_ok=True)
 
-    # Load data
     try:
         df = pd.read_csv(args.csv_path)
     except FileNotFoundError:
         print(f"Error: The file {args.csv_path} was not found.")
         return
 
-    # Filter by person ID
-    person_df = df[df['ID'] == args.person_id]
-    if person_df.empty:
-        print(f"No data found for person ID {args.person_id}.")
-        return
-        
-    # Get keypoint column names
+    if args.person_id is not None:
+        df = df[df['PersonID'] == args.person_id]
+        if df.empty:
+            print(f"No data found for person ID {args.person_id}.")
+            return
+
     keypoint_cols = [f'KP{i}_{axis}' for i in range(len(KEYPOINT_DICT)) for axis in ['X', 'Y']]
-    
-    # Check if all keypoint columns exist
-    if not all(col in person_df.columns for col in keypoint_cols):
+    if not all(col in df.columns for col in keypoint_cols):
         print("Error: CSV file is missing some keypoint columns.")
         return
 
-    # Process frames
-    for i in range(0, len(person_df), args.sample_step):
-        row = person_df.iloc[i]
+    # Define a list of colors for different skeletons
+    colors = [
+        (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), 
+        (0, 255, 255), (128, 0, 128), (128, 128, 0), (0, 128, 128)
+    ]
+
+    # Group by a frame identifier, assuming 'Timestamp' can identify a frame
+    # We'll use a combination of Timestamp and UnixTime to be more precise if needed
+    # For this implementation, let's assume rows with the same Timestamp form a single frame.
+    
+    unique_timestamps = df['Timestamp'].unique()
+
+    for i in range(0, len(unique_timestamps), args.sample_step):
+        ts = unique_timestamps[i]
+        frame_df = df[df['Timestamp'] == ts]
         
-        # Create a blank black canvas
+        if frame_df.empty:
+            continue
+
         frame = np.zeros((args.video_height, args.video_width, 3), dtype=np.uint8)
         
-        # Extract keypoints
-        keypoints = []
-        for kp_idx in range(len(KEYPOINT_DICT)):
-            x = row.get(f'KP{kp_idx}_X', 0)
-            y = row.get(f'KP{kp_idx}_Y', 0)
-            keypoints.append((x, y))
-        
-        keypoints = np.array(keypoints)
+        if args.show_timestamp:
+            timestamp = frame_df.iloc[0]['Timestamp']
+            unixtime = frame_df.iloc[0]['UnixTime']
+            cv2.putText(frame, f"Timestamp: {timestamp}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(frame, f"UnixTime: {unixtime}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-        # Draw the skeleton on the frame
-        frame_with_skeleton = draw_skeleton(frame, keypoints, SKELETON_CONNECTIONS)
-        
-        # Save the frame
-        frame_number = row.name  # Use the original index from the dataframe
+        for person_index, row in frame_df.iterrows():
+            keypoints = []
+            for kp_idx in range(len(KEYPOINT_DICT)):
+                x = row.get(f'KP{kp_idx}_X', 0)
+                y = row.get(f'KP{kp_idx}_Y', 0)
+                keypoints.append((x, y))
+            
+            keypoints = np.array(keypoints)
+            person_id = int(row.get('PersonID', 0))
+            color = colors[person_id % len(colors)] # Cycle through colors based on PersonID
+            
+            draw_skeleton(frame, keypoints, SKELETON_CONNECTIONS, color)
+
+        # The frame_number should be based on the timestamp order to have a consistent sequence
+        frame_number = np.where(unique_timestamps == ts)[0][0]
         output_path = os.path.join(args.output_dir, f"frame_{frame_number:06d}.png")
-        cv2.imwrite(output_path, frame_with_skeleton)
+        cv2.imwrite(output_path, frame)
 
-    print(f"Rendered {len(person_df) // args.sample_step} frames to {args.output_dir}")
+    rendered_frames_count = len(range(0, len(unique_timestamps), args.sample_step))
+    print(f"Rendered {rendered_frames_count} frames to {args.output_dir}")
+
 
 if __name__ == '__main__':
     main()
