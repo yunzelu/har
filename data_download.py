@@ -11,4 +11,4 @@ path = kagglehub.dataset_download("sharjeelmazhar/human-activity-recognition-vid
 print("Path to dataset files:", path)
 
 # Move the downloaded dataset to the desired directory
-shutil.move(path, "/Users/yasas/Documents/coursework-comp5013-panicatthekernel")
+# shutil.move(path, "/Users/yasas/Documents/coursework-comp5013-panicatthekernel")

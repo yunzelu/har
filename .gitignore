@@ -6,3 +6,13 @@ Human_Activity_Recognition_Video_Dataset/
 __pycache__
 
 *.mp4
+
+activity_results*.json
+
+Pose_Data
+
+rendered_frames*
+
+.vscode
+
+yolov8n-pose_openvino_model
