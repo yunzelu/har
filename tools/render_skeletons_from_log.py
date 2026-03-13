@@ -7,6 +7,7 @@ import numpy as np
 import cv2
 import os
 import argparse
+from tqdm import tqdm
 
 # The 17 keypoints from COCO dataset
 KEYPOINT_DICT = {
@@ -131,7 +132,8 @@ def main():
     ]
 
     # Group by the matched timestamp to draw all people in the same frame
-    for (uts, frame_group), frame_idx in zip(merged_df.groupby('UnixTime'), range(len(merged_df['UnixTime'].unique()))):
+    unique_timestamps = merged_df['UnixTime'].unique()
+    for (uts, frame_group), frame_idx in tqdm(zip(merged_df.groupby('UnixTime'), range(len(unique_timestamps))), total=len(unique_timestamps), desc="Rendering frames"):
         frame = np.zeros((args.video_height, args.video_width, 3), dtype=np.uint8)
 
         # All rows in this group share the same activity from the radar data

@@ -7,6 +7,7 @@ import numpy as np
 import cv2
 import os
 import argparse
+from tqdm import tqdm
 
 # The 17 keypoints from COCO dataset
 KEYPOINT_DICT = {
@@ -100,7 +101,7 @@ def main():
     # Group by a frame identifier, assuming 'UnixTime' can identify a frame 
     unique_unixtimes = df['UnixTime'].unique()
 
-    for i in range(0, len(unique_unixtimes), args.sample_step):
+    for i in tqdm(range(0, len(unique_unixtimes), args.sample_step), desc="Rendering frames"):
         uts = unique_unixtimes[i]
         frame_df = df[df['UnixTime'] == uts]
         

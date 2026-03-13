@@ -5,6 +5,7 @@ This script combines a sequence of image frames into a video file.
 import cv2
 import os
 import argparse
+from tqdm import tqdm
 
 def parse_args():
     """Parse command-line arguments."""
@@ -54,7 +55,7 @@ def main():
     print(f"Creating video '{args.output_video_path}' from {len(frame_files)} frames...")
 
     # Write each frame to the video
-    for filename in frame_files:
+    for filename in tqdm(frame_files, desc=f"Creating video '{args.output_video_path}'"):
         frame_path = os.path.join(args.frames_dir, filename)
         img = cv2.imread(frame_path)
         if img is not None:
