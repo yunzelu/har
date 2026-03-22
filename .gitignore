@@ -7,11 +7,10 @@ __pycache__
 
 *.mp4
 
+data/
+
 activity_results*.json
 
-Pose_Data
-
-rendered_frames*
 
 .vscode
 
@@ -19,6 +18,4 @@ yolov8n-pose_openvino_model
 
 *.csv
 
-keypoints/
-
-HAR_UP_Dataset/
+*.pt

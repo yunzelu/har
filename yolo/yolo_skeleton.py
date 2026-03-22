@@ -1,194 +1,91 @@
-import tkinter as tk
-from tkinter import ttk
+
 import cv2
-import time
-import sys
-import os
-import datetime
-import csv
-from PIL import Image, ImageTk
+import numpy as np
+from pathlib import Path
 
-# --- CONFIGURATION ---
-WEBCAM_INDEX = 0      
-
-# 1. RESOLUTION: Matches the export log (352 height, 640 width)
-IMGSZ = (352, 640)           
-
-# 2. FOLDER NAME: Matches what the log actually created
-MODEL_PATH = 'yolo/yolov8n-pose_openvino_model/' 
-
-OUTPUT_DIR = "Pose_Data"
-
-# --- SETUP CHECKS ---
-if not os.path.exists(OUTPUT_DIR): 
-    os.makedirs(OUTPUT_DIR)
-
+# Attempt to import YOLO from ultralytics
 try:
     from ultralytics import YOLO
 except ImportError:
-    print("Error: Library missing. Run: pip install ultralytics")
-    sys.exit(1)
+    raise ImportError("The 'ultralytics' package is not installed. Please install it with 'pip install ultralytics'.")
 
-# Check if model exists
-if not os.path.exists(MODEL_PATH):
-    print(f"\n[CRITICAL ERROR] Model folder not found: {MODEL_PATH}")
-    print("It seems the export didn't save where we expected.")
-    print("Check your folder for 'yolov8n-pose_openvino_model'.\n")
-    sys.exit(1)
+class YOLOSkeleton:
+    """
+    A wrapper class for the YOLOv8 pose estimation model, specifically for use
+    with OpenVINO exported models.
+    """
+    def __init__(self, model_path_str: str):
+        """
+        Initializes the YOLOSkeleton model from a .pt file or an OpenVINO model directory.
 
-class WideTrackerApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title(f"Wide-FOV Tracker (13ms)")
-        
-        self.running = False
-        self.recording = False
-        self.video_cap = None
-        self.csv_file = None
-        self.csv_writer = None
+        Args:
+            model_path_str (str): The path to the YOLOv8 pose model. 
+                                  Can be a .pt file or a directory for an OpenVINO model.
+        """
+        model_path = Path(model_path_str)
 
-        print(f"[INFO] Loading Wide-FOV Engine from: {MODEL_PATH}...")
-        self.model = YOLO(MODEL_PATH, task='pose') 
-        print("[INFO] Engine Ready.")
+        if not model_path.exists():
+            raise FileNotFoundError(f"The model path was not found at: {model_path}")
 
-        # --- GUI Layout ---
-        # Canvas set to 640x360 (16:9 Aspect Ratio) to match Wide Input
-        self.canvas = tk.Canvas(self.root, width=640, height=360, bg="#222")
-        self.canvas.pack()
-
-        stats = ttk.Frame(self.root)
-        stats.pack(pady=5)
-        self.fps_lbl = ttk.Label(stats, text="FPS: 0", font=("Consolas", 12, "bold"))
-        self.fps_lbl.pack(side=tk.LEFT, padx=10)
-        self.lat_lbl = ttk.Label(stats, text="Lat: 0ms", font=("Consolas", 12))
-        self.lat_lbl.pack(side=tk.LEFT, padx=10)
-        self.count_lbl = ttk.Label(stats, text="Ppl: 0", font=("Consolas", 12))
-        self.count_lbl.pack(side=tk.LEFT, padx=10)
-
-        btns = ttk.Frame(self.root)
-        btns.pack(pady=5)
-        self.btn_start = ttk.Button(btns, text="Start Camera", command=self.start)
-        self.btn_start.grid(row=0, column=0, padx=5)
-        self.btn_rec = ttk.Button(btns, text="Record Data", command=self.toggle_rec, state=tk.DISABLED)
-        self.btn_rec.grid(row=0, column=1, padx=5)
-
-        self.photo = None
-        self.frame_count = 0
-        self.last_time = time.time()
-
-    def start(self):
-        if not self.running:
-            self.video_cap = cv2.VideoCapture(WEBCAM_INDEX)
-            
-            # --- PERFORMANCE & FOV SETTINGS ---
-            # 1. Force MJPG (Solves USB Bottleneck)
-            self.video_cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G'))
-            self.video_cap.set(cv2.CAP_PROP_FPS, 60)
-            
-            # 2. Force HD Resolution (1280x720)
-            # This forces the camera to use the full WIDESCREEN sensor (16:9).
-            # The code will resize this to 640x352 automatically.
-            self.video_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-            self.video_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-            
-            # 3. Low Latency Buffer
-            self.video_cap.set(cv2.CAP_PROP_BUFFERSIZE, 1) 
-            
-            if not self.video_cap.isOpened():
-                print("Error: Camera not found.")
-                return
-
-            self.running = True
-            self.btn_rec.config(state=tk.NORMAL)
-            self.btn_start.config(state=tk.DISABLED)
-            self.update()
-
-    def toggle_rec(self):
-        if not self.recording:
-            # Start Recording
-            self.recording = True
-            self.btn_rec.config(text="Stop Recording")
-            
-            ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            fname = os.path.join(OUTPUT_DIR, f"pose_{ts}.csv")
-            
-            self.csv_file = open(fname, 'w', newline='')
-            self.csv_writer = csv.writer(self.csv_file)
-            
-            # Header: Timestamp, PersonID, Keypoints...
-            header = ["Timestamp", "ID"] + [f"KP{i}_{c}" for i in range(17) for c in ["X","Y","C"]]
-            self.csv_writer.writerow(header)
-            print(f"[REC] Started: {fname}")
+        if model_path.is_dir():
+            print(f"Loading OpenVINO YOLOv8-pose model from directory: {model_path}")
+        elif model_path.is_file() and model_path.suffix == '.pt':
+            print(f"Loading YOLOv8-pose model from .pt file: {model_path}")
         else:
-            # Stop Recording
-            self.recording = False
-            self.btn_rec.config(text="Record Data")
-            if self.csv_file: self.csv_file.close()
-            print("[REC] Saved.")
+            raise ValueError(f"Unsupported model path: {model_path}. Please provide a .pt file or an OpenVINO model directory.")
 
-    def update(self):
-        if not self.running: return
+        # The YOLO class can handle both a .pt file and a directory for OpenVINO.
+        self.model = YOLO(model_path)
+        print("Model loaded successfully.")
 
-        # 1. GROUND TRUTH TIMESTAMP
-        capture_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+    def get_keypoints(self, image: np.ndarray) -> list:
+        """
+        Performs pose estimation on a single image.
 
-        success, frame = self.video_cap.read()
-        if not success:
-            self.root.after(1, self.update)
-            return
+        Args:
+            image (np.ndarray): The input image in BGR format (as read by OpenCV).
 
-        t0 = time.time()
+        Returns:
+            list: A list of ultralytics.engine.results.Results objects.
+                  Each object in the list contains the detected keypoints,
+                  bounding boxes, and scores for one person.
+        """
+        # Perform inference on the image.
+        # The model expects RGB images, but the YOLO class handles the conversion.
+        # 'verbose=False' prevents extensive logging for each prediction.
+        results = self.model.predict(image, verbose=False)
+        return results
 
-        # 2. INFERENCE
-        # We explicitly pass the wide shape tuple (352, 640)
-        results = self.model.track(
-            frame, 
-            persist=True, 
-            verbose=False, 
-            imgsz=IMGSZ,
-            conf=0.5
-        )
-        
-        t1 = time.time()
-        latency = (t1 - t0) * 1000
+    def track_skeletons(self, image_sequence: list) -> iter:
+        """
+        Performs pose tracking across a sequence of images using a generator.
 
-        # 3. VISUALIZATION
+        Args:
+            image_sequence (list): A list of images (as np.ndarray) or image paths.
+
+        Returns:
+            generator: A generator of ultralytics.engine.results.Results objects,
+                       one for each image in the sequence, with tracker IDs assigned.
+        """
+        # stream=True is crucial for long videos or large image sequences to
+        # prevent memory errors and to process frames one by one.
+        results_generator = self.model.track(source=image_sequence, persist=True, verbose=False, stream=True)
+        return results_generator
+
+    def draw_keypoints(self, image: np.ndarray, results: list) -> np.ndarray:
+        """
+        Draws the detected keypoints and bounding boxes on an image.
+
+        Args:
+            image (np.ndarray): The original image to draw on.
+            results (list): The list of Results objects from the get_keypoints method.
+
+        Returns:
+            np.ndarray: The image with annotations drawn on it.
+        """
+        if not results:
+            return image
+
+        # The plot() method from the Results object handles all the drawing
         annotated_frame = results[0].plot()
-        
-        # 4. SAVE DATA
-        person_count = 0
-        if results[0].boxes.id is not None:
-            ids = results[0].boxes.id.cpu().numpy().astype(int)
-            kpts = results[0].keypoints.data.cpu().numpy()
-            person_count = len(ids)
-
-            if self.recording and self.csv_writer:
-                for i, p_id in enumerate(ids):
-                    row = [capture_ts, p_id]
-                    row.extend(kpts[i].flatten())
-                    self.csv_writer.writerow(row)
-
-        # 5. UI UPDATE
-        self.count_lbl.config(text=f"Ppl: {person_count}")
-        
-        # Resize for GUI display (Matches canvas size)
-        display_frame = cv2.resize(annotated_frame, (640, 360))
-        rgb = cv2.cvtColor(display_frame, cv2.COLOR_BGR2RGB)
-        img_tk = ImageTk.PhotoImage(image=Image.fromarray(rgb))
-        self.canvas.create_image(0, 0, image=img_tk, anchor=tk.NW)
-        self.photo = img_tk
-
-        self.frame_count += 1
-        if time.time() - self.last_time >= 1.0:
-            fps = self.frame_count
-            self.fps_lbl.config(text=f"FPS: {fps}")
-            self.lat_lbl.config(text=f"Lat: {latency:.1f}ms")
-            self.frame_count = 0
-            self.last_time = time.time()
-
-        self.root.after(1, self.update)
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = WideTrackerApp(root)
-    root.mainloop()
+        return annotated_frame

@@ -19,7 +19,7 @@ import seaborn as sns
 
 # Configuration class that centralizes all hyperparameters and settings
 class Config:
-    data_dir = "keypoints"                  # Directory containing the keypoint data
+    data_dir = "data\keypoints"                  # Directory containing the keypoint data
     batch_size = 64                         # Number of samples per batch (reduced for better generalization)
     num_workers = 4                         # Number of parallel workers for data loading
     lr = 0.0003                             # Learning rate for optimizer
