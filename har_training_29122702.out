@@ -1,0 +1,419 @@
+Starting CNN-Transformer Training on GPU...
+Using device: cuda
+Loading data...
+Loading activities:   0%|          | 0/4 [00:00<?, ?it/s]Loading activities:  25%|██▌       | 1/4 [00:15<00:46, 15.63s/it]Loading activities:  50%|█████     | 2/4 [00:31<00:31, 15.81s/it]Loading activities:  75%|███████▌  | 3/4 [00:49<00:16, 16.64s/it]Loading activities: 100%|██████████| 4/4 [01:05<00:00, 16.45s/it]Loading activities: 100%|██████████| 4/4 [01:05<00:00, 16.34s/it]
+/home/yunzelu/har/.venv/lib/python3.10/site-packages/torch/nn/modules/transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.self_attn.batch_first was not True(use batch_first for better inference performance)
+  warnings.warn(
+Class 0 - Lying: 192 samples
+Class 1 - Sitting: 204 samples
+Class 2 - Standing: 204 samples
+Class 3 - Walking: 204 samples
+Total Unique Subjects found: 17
+Train Subjects: [ 1  2  6 16 12 15  9 14  3 10]
+Val Subjects: [17  5]
+Calibration Subjects: [ 8 11]
+Test Subjects: [13  4  7]
+Train: 476 samples
+Validation: 96 samples
+Calibration: 88 samples (Reserved for Conformal Prediction)
+Test: 144 samples
+Model has 3,384,042 trainable parameters
+Starting training...
+Epoch 1/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 1/15:   1%|▏         | 1/75 [00:03<04:03,  3.29s/it]Epoch 1/15:   5%|▌         | 4/75 [00:03<00:46,  1.54it/s]Epoch 1/15:  16%|█▌        | 12/75 [00:03<00:10,  5.92it/s]Epoch 1/15:  27%|██▋       | 20/75 [00:03<00:04, 11.36it/s]Epoch 1/15:  37%|███▋      | 28/75 [00:03<00:02, 17.85it/s]Epoch 1/15:  48%|████▊     | 36/75 [00:03<00:01, 25.20it/s]Epoch 1/15:  59%|█████▊    | 44/75 [00:03<00:00, 33.02it/s]Epoch 1/15:  69%|██████▉   | 52/75 [00:04<00:00, 40.86it/s]Epoch 1/15:  80%|████████  | 60/75 [00:04<00:00, 48.27it/s]Epoch 1/15:  91%|█████████ | 68/75 [00:04<00:00, 54.79it/s]Epoch 1/15: 100%|██████████| 75/75 [00:04<00:00, 17.06it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 1/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000300
+Epoch 2/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 2/15:   1%|▏         | 1/75 [00:00<00:13,  5.52it/s]Epoch 2/15:  12%|█▏        | 9/75 [00:00<00:01, 37.00it/s]Epoch 2/15:  23%|██▎       | 17/75 [00:00<00:01, 52.57it/s]Epoch 2/15:  33%|███▎      | 25/75 [00:00<00:00, 61.36it/s]Epoch 2/15:  44%|████▍     | 33/75 [00:00<00:00, 66.75it/s]Epoch 2/15:  55%|█████▍    | 41/75 [00:00<00:00, 70.14it/s]Epoch 2/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.42it/s]Epoch 2/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.92it/s]Epoch 2/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.99it/s]Epoch 2/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.81it/s]Epoch 2/15: 100%|██████████| 75/75 [00:01<00:00, 62.44it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 2/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000300
+Epoch 3/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 3/15:   1%|▏         | 1/75 [00:00<00:12,  5.72it/s]Epoch 3/15:  12%|█▏        | 9/75 [00:00<00:01, 37.19it/s]Epoch 3/15:  23%|██▎       | 17/75 [00:00<00:01, 52.67it/s]Epoch 3/15:  33%|███▎      | 25/75 [00:00<00:00, 61.43it/s]Epoch 3/15:  44%|████▍     | 33/75 [00:00<00:00, 66.87it/s]Epoch 3/15:  55%|█████▍    | 41/75 [00:00<00:00, 70.28it/s]Epoch 3/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.31it/s]Epoch 3/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.83it/s]Epoch 3/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.98it/s]Epoch 3/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.89it/s]Epoch 3/15: 100%|██████████| 75/75 [00:01<00:00, 62.64it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 3/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000300
+Epoch 4/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 4/15:   1%|▏         | 1/75 [00:00<00:13,  5.52it/s]Epoch 4/15:  12%|█▏        | 9/75 [00:00<00:01, 35.13it/s]Epoch 4/15:  23%|██▎       | 17/75 [00:00<00:01, 50.98it/s]Epoch 4/15:  33%|███▎      | 25/75 [00:00<00:00, 60.16it/s]Epoch 4/15:  44%|████▍     | 33/75 [00:00<00:00, 65.84it/s]Epoch 4/15:  55%|█████▍    | 41/75 [00:00<00:00, 69.61it/s]Epoch 4/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.04it/s]Epoch 4/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.71it/s]Epoch 4/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.84it/s]Epoch 4/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.58it/s]Epoch 4/15: 100%|██████████| 75/75 [00:01<00:00, 61.90it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 4/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000150
+Epoch 5/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 5/15:   1%|▏         | 1/75 [00:00<00:13,  5.69it/s]Epoch 5/15:  12%|█▏        | 9/75 [00:00<00:01, 36.38it/s]Epoch 5/15:  23%|██▎       | 17/75 [00:00<00:01, 52.06it/s]Epoch 5/15:  33%|███▎      | 25/75 [00:00<00:00, 60.88it/s]Epoch 5/15:  44%|████▍     | 33/75 [00:00<00:00, 66.19it/s]Epoch 5/15:  55%|█████▍    | 41/75 [00:00<00:00, 69.81it/s]Epoch 5/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.19it/s]Epoch 5/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.69it/s]Epoch 5/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.89it/s]Epoch 5/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.75it/s]Epoch 5/15: 100%|██████████| 75/75 [00:01<00:00, 62.39it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 5/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000150
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Test Loss: nan, Test Acc: 0.2503
+Epoch 6/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 6/15:   1%|▏         | 1/75 [00:00<00:13,  5.53it/s]Epoch 6/15:  12%|█▏        | 9/75 [00:00<00:01, 36.12it/s]Epoch 6/15:  23%|██▎       | 17/75 [00:00<00:01, 51.79it/s]Epoch 6/15:  33%|███▎      | 25/75 [00:00<00:00, 60.69it/s]Epoch 6/15:  44%|████▍     | 33/75 [00:00<00:00, 66.24it/s]Epoch 6/15:  55%|█████▍    | 41/75 [00:00<00:00, 69.80it/s]Epoch 6/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.16it/s]Epoch 6/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.75it/s]Epoch 6/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.88it/s]Epoch 6/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.78it/s]Epoch 6/15: 100%|██████████| 75/75 [00:01<00:00, 62.13it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 6/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000150
+Epoch 7/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 7/15:   1%|▏         | 1/75 [00:00<00:13,  5.29it/s]Epoch 7/15:  12%|█▏        | 9/75 [00:00<00:01, 35.86it/s]Epoch 7/15:  23%|██▎       | 17/75 [00:00<00:01, 51.55it/s]Epoch 7/15:  33%|███▎      | 25/75 [00:00<00:00, 60.58it/s]Epoch 7/15:  44%|████▍     | 33/75 [00:00<00:00, 66.18it/s]Epoch 7/15:  55%|█████▍    | 41/75 [00:00<00:00, 69.80it/s]Epoch 7/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.26it/s]Epoch 7/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.95it/s]Epoch 7/15:  87%|████████▋ | 65/75 [00:01<00:00, 75.14it/s]Epoch 7/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.73it/s]Epoch 7/15: 100%|██████████| 75/75 [00:01<00:00, 62.16it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 7/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000150
+Epoch 8/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 8/15:   1%|▏         | 1/75 [00:00<00:14,  5.14it/s]Epoch 8/15:  12%|█▏        | 9/75 [00:00<00:01, 35.68it/s]Epoch 8/15:  23%|██▎       | 17/75 [00:00<00:01, 51.32it/s]Epoch 8/15:  33%|███▎      | 25/75 [00:00<00:00, 60.53it/s]Epoch 8/15:  44%|████▍     | 33/75 [00:00<00:00, 66.27it/s]Epoch 8/15:  55%|█████▍    | 41/75 [00:00<00:00, 69.85it/s]Epoch 8/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.28it/s]Epoch 8/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.94it/s]Epoch 8/15:  87%|████████▋ | 65/75 [00:01<00:00, 75.09it/s]Epoch 8/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.91it/s]Epoch 8/15: 100%|██████████| 75/75 [00:01<00:00, 61.98it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 8/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000075
+Epoch 9/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 9/15:   1%|▏         | 1/75 [00:00<00:13,  5.57it/s]Epoch 9/15:  12%|█▏        | 9/75 [00:00<00:01, 35.43it/s]Epoch 9/15:  23%|██▎       | 17/75 [00:00<00:01, 51.25it/s]Epoch 9/15:  33%|███▎      | 25/75 [00:00<00:00, 60.34it/s]Epoch 9/15:  44%|████▍     | 33/75 [00:00<00:00, 65.96it/s]Epoch 9/15:  55%|█████▍    | 41/75 [00:00<00:00, 69.54it/s]Epoch 9/15:  65%|██████▌   | 49/75 [00:00<00:00, 71.99it/s]Epoch 9/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.66it/s]Epoch 9/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.77it/s]Epoch 9/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.64it/s]Epoch 9/15: 100%|██████████| 75/75 [00:01<00:00, 61.99it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 9/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000075
+Epoch 10/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 10/15:   1%|▏         | 1/75 [00:00<00:13,  5.37it/s]Epoch 10/15:  11%|█         | 8/75 [00:00<00:02, 32.43it/s]Epoch 10/15:  21%|██▏       | 16/75 [00:00<00:01, 49.65it/s]Epoch 10/15:  32%|███▏      | 24/75 [00:00<00:00, 59.42it/s]Epoch 10/15:  43%|████▎     | 32/75 [00:00<00:00, 65.36it/s]Epoch 10/15:  53%|█████▎    | 40/75 [00:00<00:00, 69.09it/s]Epoch 10/15:  64%|██████▍   | 48/75 [00:00<00:00, 71.61it/s]Epoch 10/15:  75%|███████▍  | 56/75 [00:00<00:00, 73.25it/s]Epoch 10/15:  85%|████████▌ | 64/75 [00:01<00:00, 74.41it/s]Epoch 10/15:  96%|█████████▌| 72/75 [00:01<00:00, 75.45it/s]Epoch 10/15: 100%|██████████| 75/75 [00:01<00:00, 61.58it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 10/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000075
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Test Loss: nan, Test Acc: 0.2503
+Epoch 11/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 11/15:   1%|▏         | 1/75 [00:00<00:13,  5.50it/s]Epoch 11/15:  11%|█         | 8/75 [00:00<00:01, 33.62it/s]Epoch 11/15:  21%|██▏       | 16/75 [00:00<00:01, 50.67it/s]Epoch 11/15:  32%|███▏      | 24/75 [00:00<00:00, 60.28it/s]Epoch 11/15:  43%|████▎     | 32/75 [00:00<00:00, 66.05it/s]Epoch 11/15:  53%|█████▎    | 40/75 [00:00<00:00, 69.74it/s]Epoch 11/15:  64%|██████▍   | 48/75 [00:00<00:00, 72.24it/s]Epoch 11/15:  75%|███████▍  | 56/75 [00:00<00:00, 73.88it/s]Epoch 11/15:  85%|████████▌ | 64/75 [00:01<00:00, 75.02it/s]Epoch 11/15:  96%|█████████▌| 72/75 [00:01<00:00, 75.93it/s]Epoch 11/15: 100%|██████████| 75/75 [00:01<00:00, 62.14it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 11/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000075
+Epoch 12/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 12/15:   1%|▏         | 1/75 [00:00<00:13,  5.54it/s]Epoch 12/15:  12%|█▏        | 9/75 [00:00<00:01, 36.77it/s]Epoch 12/15:  23%|██▎       | 17/75 [00:00<00:01, 52.51it/s]Epoch 12/15:  33%|███▎      | 25/75 [00:00<00:00, 61.26it/s]Epoch 12/15:  44%|████▍     | 33/75 [00:00<00:00, 66.73it/s]Epoch 12/15:  55%|█████▍    | 41/75 [00:00<00:00, 70.10it/s]Epoch 12/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.42it/s]Epoch 12/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.93it/s]Epoch 12/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.95it/s]Epoch 12/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.68it/s]Epoch 12/15: 100%|██████████| 75/75 [00:01<00:00, 62.53it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 12/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000037
+Epoch 13/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 13/15:   1%|▏         | 1/75 [00:00<00:13,  5.47it/s]Epoch 13/15:  12%|█▏        | 9/75 [00:00<00:01, 36.07it/s]Epoch 13/15:  23%|██▎       | 17/75 [00:00<00:01, 51.84it/s]Epoch 13/15:  33%|███▎      | 25/75 [00:00<00:00, 60.75it/s]Epoch 13/15:  44%|████▍     | 33/75 [00:00<00:00, 66.21it/s]Epoch 13/15:  55%|█████▍    | 41/75 [00:00<00:00, 69.71it/s]Epoch 13/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.02it/s]Epoch 13/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.59it/s]Epoch 13/15:  87%|████████▋ | 65/75 [00:01<00:00, 74.67it/s]Epoch 13/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.54it/s]Epoch 13/15: 100%|██████████| 75/75 [00:01<00:00, 62.12it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 13/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000037
+Epoch 14/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 14/15:   1%|▏         | 1/75 [00:00<00:13,  5.60it/s]Epoch 14/15:  12%|█▏        | 9/75 [00:00<00:01, 36.62it/s]Epoch 14/15:  23%|██▎       | 17/75 [00:00<00:01, 52.31it/s]Epoch 14/15:  33%|███▎      | 25/75 [00:00<00:00, 61.01it/s]Epoch 14/15:  44%|████▍     | 33/75 [00:00<00:00, 66.44it/s]Epoch 14/15:  55%|█████▍    | 41/75 [00:00<00:00, 70.05it/s]Epoch 14/15:  65%|██████▌   | 49/75 [00:00<00:00, 72.41it/s]Epoch 14/15:  76%|███████▌  | 57/75 [00:00<00:00, 73.94it/s]Epoch 14/15:  87%|████████▋ | 65/75 [00:01<00:00, 75.09it/s]Epoch 14/15:  97%|█████████▋| 73/75 [00:01<00:00, 75.95it/s]Epoch 14/15: 100%|██████████| 75/75 [00:01<00:00, 62.39it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 14/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000037
+Epoch 15/15:   0%|          | 0/75 [00:00<?, ?it/s]/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+/home/yunzelu/har/cnn_transformer/my_train.py:159: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = torch.FloatTensor(sample)
+Epoch 15/15:   1%|▏         | 1/75 [00:00<00:14,  5.19it/s]Epoch 15/15:  11%|█         | 8/75 [00:00<00:02, 32.64it/s]Epoch 15/15:  21%|██▏       | 16/75 [00:00<00:01, 49.83it/s]Epoch 15/15:  32%|███▏      | 24/75 [00:00<00:00, 59.42it/s]Epoch 15/15:  43%|████▎     | 32/75 [00:00<00:00, 65.41it/s]Epoch 15/15:  53%|█████▎    | 40/75 [00:00<00:00, 69.10it/s]Epoch 15/15:  64%|██████▍   | 48/75 [00:00<00:00, 71.70it/s]Epoch 15/15:  75%|███████▍  | 56/75 [00:00<00:00, 73.41it/s]Epoch 15/15:  85%|████████▌ | 64/75 [00:01<00:00, 74.53it/s]Epoch 15/15:  96%|█████████▌| 72/75 [00:01<00:00, 75.35it/s]Epoch 15/15: 100%|██████████| 75/75 [00:01<00:00, 61.73it/s]
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Epoch 15/15 - Train Loss: nan - Val Loss: nan - Val Acc: 0.2500 - LR: 0.000037
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Test Loss: nan, Test Acc: 0.2503
+Training complete. Evaluating final model...
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Final Validation - Loss: 0.8264, Accuracy: 0.6708
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+Final Test - Loss: nan, Accuracy: 0.7434
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+
+Calculating validation metrics...
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+
+Validation Metrics:
+Accuracy: 0.6708
+Weighted Precision: 0.7701
+Weighted Recall: 0.6708
+Weighted F1-score: 0.6645
+
+Per-class metrics:
+Lying: Precision=0.9903, Recall=0.8500, F1=0.9148
+Sitting: Precision=0.4743, Recall=1.0000, F1=0.6434
+Standing: Precision=0.6160, Recall=0.3208, F1=0.4219
+Walking: Precision=1.0000, Recall=0.5125, F1=0.6777
+
+Classification Report:
+              precision    recall  f1-score   support
+
+       Lying       0.99      0.85      0.91       240
+     Sitting       0.47      1.00      0.64       240
+    Standing       0.62      0.32      0.42       240
+     Walking       1.00      0.51      0.68       240
+
+    accuracy                           0.67       960
+   macro avg       0.77      0.67      0.66       960
+weighted avg       0.77      0.67      0.66       960
+
+
+Calculating test metrics...
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+/home/yunzelu/har/cnn_transformer/my_train.py:178: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /shared_tmp/build_wheels_tmp.115664/python-3.10/torch/torch/csrc/utils/tensor_new.cpp:254.)
+  sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+
+Test Metrics:
+Accuracy: 0.7434
+Weighted Precision: 0.7920
+Weighted Recall: 0.7434
+Weighted F1-score: 0.7361
+
+Per-class metrics:
+Lying: Precision=0.9712, Recall=0.9361, F1=0.9533
+Sitting: Precision=0.5788, Recall=1.0000, F1=0.7332
+Standing: Precision=0.6989, Recall=0.5222, F1=0.5978
+Walking: Precision=0.9200, Recall=0.5140, F1=0.6595
+
+Classification Report:
+              precision    recall  f1-score   support
+
+       Lying       0.97      0.94      0.95       360
+     Sitting       0.58      1.00      0.73       360
+    Standing       0.70      0.52      0.60       360
+     Walking       0.92      0.51      0.66       358
+
+    accuracy                           0.74      1438
+   macro avg       0.79      0.74      0.74      1438
+weighted avg       0.79      0.74      0.74      1438
+
+Training completed successfully!
+Model saved to cnn_transformer/cnn_transformer_model.pth
+Model info saved to cnn_transformer/model_info.json
+Training finished.
