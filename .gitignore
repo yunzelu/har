@@ -19,3 +19,5 @@ yolov8n-pose_openvino_model
 *.csv
 
 *.pt
+
+.venv
