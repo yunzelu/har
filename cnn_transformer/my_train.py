@@ -20,7 +20,7 @@ import re
 
 # Configuration class that centralizes all hyperparameters and settings
 class Config:
-    data_dir = "data\keypoints"                  
+    data_dir = "data/keypoints"                  
     batch_size = 64                         
     num_workers = 4                         
     lr = 0.0003                             
