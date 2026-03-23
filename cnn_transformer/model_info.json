@@ -1,15 +1,13 @@
 {
   "config": {},
   "classes": [
-    "Clapping",
+    "Lying",
     "Sitting",
-    "Standing Still",
-    "Walking",
-    "Walking While Reading Book",
-    "Walking While Using Phone"
+    "Standing",
+    "Walking"
   ],
-  "label_encoder_path": "label_encoder_classes.npy",
-  "model_path": "cnn_transformer_model.pth",
-  "input_dim": 68,
-  "num_classes": 6
+  "label_encoder_path": "cnn_transformer_label_encoder_classes.npy",
+  "model_path": "cnn_transformer/cnn_transformer_model.pth",
+  "input_dim": 85,
+  "num_classes": 4
 }
