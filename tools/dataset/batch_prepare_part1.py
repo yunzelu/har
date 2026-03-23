@@ -5,10 +5,18 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
 
 # --- CONFIGURATION ---
-BASE_INPUT_PATH = r"E:\HAR_UP_Dataset"
-BASE_OUTPUT_PATH = r"D:\lu\project\har\data\up_dataset\temp"
-EXTRACT_SCRIPT = r".\tools\dataset\extract_raw_keypoint.py"
-VIDEO_SCRIPT = r".\tools\frames_to_video.py"
+# BASE_INPUT_PATH = r"E:\HAR_UP_Dataset"
+# BASE_OUTPUT_PATH = r"D:\lu\project\har\data\up_dataset\temp"
+# EXTRACT_SCRIPT = r".\tools\dataset\extract_raw_keypoint.py"
+# VIDEO_SCRIPT = r".\tools\frames_to_video.py"
+# Assuming you upload the 'HAR_UP_Dataset' folder directly to your scratch space
+BASE_INPUT_PATH = os.path.join(SCRATCH_DIR, "HAR_UP_Dataset")
+# Outputting to a 'temp' folder inside your scratch space
+BASE_OUTPUT_PATH = os.path.join(SCRATCH_DIR, "project", "data", "up_dataset", "temp")
+# Linux uses forward slashes (/) for relative paths
+EXTRACT_SCRIPT = "./tools/dataset/extract_raw_keypoint.py"
+VIDEO_SCRIPT = "./tools/frames_to_video.py"
+
 MAX_WORKERS = 6
 
 def process_zip(subject, activity, trial_num, camera_num):
