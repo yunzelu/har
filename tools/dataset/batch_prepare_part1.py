@@ -9,6 +9,8 @@ from tqdm import tqdm
 # BASE_OUTPUT_PATH = r"D:\lu\project\har\data\up_dataset\temp"
 # EXTRACT_SCRIPT = r".\tools\dataset\extract_raw_keypoint.py"
 # VIDEO_SCRIPT = r".\tools\frames_to_video.py"
+
+SCRATCH_DIR = os.environ.get("SCRATCH", "/scratch/your_username")
 # Assuming you upload the 'HAR_UP_Dataset' folder directly to your scratch space
 BASE_INPUT_PATH = os.path.join(SCRATCH_DIR, "HAR_UP_Dataset")
 # Outputting to a 'temp' folder inside your scratch space
