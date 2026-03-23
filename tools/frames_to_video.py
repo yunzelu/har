@@ -12,7 +12,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Create a video from a directory of frames.")
     parser.add_argument('--frames-dir', type=str, required=True, help='Directory containing the image frames.')
     parser.add_argument('--output-video-path', type=str, required=True, help='Path to save the output video file (e.g., output.mp4).')
-    parser.add_argument('--fps', type=int, default=30, help='Frames per second for the output video.')
+    parser.add_argument('--fps', type=int, default=20, help='Frames per second for the output video.')
     return parser.parse_args()
 
 def main():

@@ -30,7 +30,7 @@ class YOLOSkeleton:
         if model_path.is_dir():
             print(f"Loading OpenVINO YOLOv8-pose model from directory: {model_path}")
         elif model_path.is_file() and model_path.suffix == '.pt':
-            print(f"Loading YOLOv8-pose model from .pt file: {model_path}")
+            print(f"Loading YOLO-pose model from .pt file: {model_path}")
         else:
             raise ValueError(f"Unsupported model path: {model_path}. Please provide a .pt file or an OpenVINO model directory.")
 

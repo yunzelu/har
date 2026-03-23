@@ -5,10 +5,13 @@ import argparse
 from pathlib import Path
 from tqdm import tqdm
 import cv2
+import zipfile
+import tempfile
+import shutil
 
 # Add the project root to the Python path to allow importing from yolo
 try:
-    project_root = Path(__file__).resolve().parent.parent
+    project_root = Path(__file__).resolve().parent.parent.parent
     sys.path.append(str(project_root))
     from yolo.yolo_skeleton import YOLOSkeleton
 except ImportError as e:
@@ -107,38 +110,60 @@ def process_activity_folder(input_dir: Path,
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Process a folder of activity images: render skeletons and extract keypoints to JSON.",
-        epilog="Example: python tools/process_activity_folder.py my_activity_images --output_render_dir rendered --output_json_dir keypoints"
+        description="Process a folder of activity images (or a zip file of images): render skeletons and extract keypoints to JSON.",
+        epilog="Example: python tools/dataset/extract_raw_keypoint.py my_activity_images.zip --output_render_dir rendered --output_json_dir keypoints"
     )
-    parser.add_argument('input_dir', type=str, help='Path to the directory of images for one activity.')
+    parser.add_argument('input_path', type=str, help='Path to the directory of images or a zip file for one activity.')
     parser.add_argument('--output_render_dir', type=str, required=True, help='Directory to save the rendered images.')
     parser.add_argument('--output_json_dir', type=str, required=True, help='Root directory to save the output JSON files.')
-    parser.add_argument('--activity_name', type=str, default=None, help='Name of the activity. If not provided, it is inferred from the input directory name.')
-    parser.add_argument('--model-path', type=str, default='yolo/yolov8n-pose_openvino_model', help='Path to the YOLO model directory.')
-    parser.add_argument('--conf', type=float, default=0.5, help='Confidence threshold for detection.')
+    parser.add_argument('--activity_name', type=str, default=None, help='Name of the activity. If not provided, it is inferred from the input directory or zip file name.')
+    parser.add_argument('--model-path', type=str, default='yolo/yolo26m-pose.pt', help='Path to the YOLO model directory.')
+    parser.add_argument('--conf', type=float, default=0.09, help='Confidence threshold for detection.')
     
     args = parser.parse_args()
 
-    input_path = Path(args.input_dir)
+    input_path = Path(args.input_path)
     render_path = Path(args.output_render_dir)
     json_path = Path(args.output_json_dir)
     model_path = Path(args.model_path)
     
-    activity_name = args.activity_name if args.activity_name else input_path.name
-
-    if not input_path.is_dir():
-        print(f"Error: Input directory '{input_path}' not found.")
+    temp_dir = None
+    if input_path.is_file() and input_path.suffix.lower() == '.zip':
+        try:
+            temp_dir = tempfile.mkdtemp(prefix="har_zip_")
+            print(f"Extracting '{input_path}' to temporary directory '{temp_dir}'...")
+            with zipfile.ZipFile(input_path, 'r') as zip_ref:
+                zip_ref.extractall(temp_dir)
+            
+            # The input for processing is now the temporary directory
+            process_input_path = Path(temp_dir)
+            activity_name = args.activity_name if args.activity_name else input_path.stem
+        except (zipfile.BadZipFile, FileNotFoundError) as e:
+            print(f"Error: {e}")
+            if temp_dir:
+                shutil.rmtree(temp_dir)
+            return
+    elif input_path.is_dir():
+        process_input_path = input_path
+        activity_name = args.activity_name if args.activity_name else input_path.name
+    else:
+        print(f"Error: Input path '{input_path}' is not a valid directory or .zip file.")
         return
 
-    print("-" * 50)
-    print(f"Processing Activity: {activity_name}")
-    print(f"  Input folder: {input_path}")
-    print(f"  Render output: {render_path}")
-    print(f"  JSON output: {json_path}")
-    print(f"  Confidence Threshold: {args.conf}")
-    print("-" * 50)
+    try:
+        print("-" * 50)
+        print(f"Processing Activity: {activity_name}")
+        print(f"  Input: {input_path}")
+        print(f"  Render output: {render_path}")
+        print(f"  JSON output: {json_path}")
+        print(f"  Confidence Threshold: {args.conf}")
+        print("-" * 50)
 
-    process_activity_folder(input_path, render_path, json_path, model_path, activity_name, args.conf)
+        process_activity_folder(process_input_path, render_path, json_path, model_path, activity_name, args.conf)
+    finally:
+        if temp_dir:
+            print(f"Cleaning up temporary directory '{temp_dir}'...")
+            shutil.rmtree(temp_dir)
 
     print("="*50)
     print("Processing complete.")
