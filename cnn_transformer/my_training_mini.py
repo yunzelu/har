@@ -17,38 +17,53 @@ from collections import defaultdict
 from sklearn.metrics import precision_recall_fscore_support, classification_report, confusion_matrix
 import seaborn as sns
 import re
+from datetime import datetime
 
 # Configuration class that centralizes all hyperparameters and settings
 class Config:
-    data_dir = "data/keypoints"                  
-    batch_size = 8                         
-    num_workers = 0                         
-    lr = 0.0003                             
-    weight_decay = 1e-5                     
-    epochs = 2                             
-    num_classes = None                      
-    input_dim = 85                          # UPDATED: 68 features (x, y, dx, dy) + 17 scores
-    hidden_dim = 256                        
-    num_layers = 4                          
-    nhead = 8                               
-    dropout = 0.4                           
-    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")  
-    save_path = "cnn_transformer/cnn_transformer_model.pth"  
-    chunk_size = 64                         
-    overlap = 16                            
-    max_sequence_length = 536               
-    augmentation_prob = 0.7                 
-    temporal_smooth_weight = 0.3            
-    score_threshold = 0.25                  # NEW: Threshold for masking out joints
+    def __init__(self):
+        # 1. Generate the timestamped directory string (e.g., 2026-03-23_10-57-00)
+        self.timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.run_dir = f"cnn_transformer/training_outputs/{self.timestamp}"
+        self.results_dir = f"{self.run_dir}/results"
+        
+        # 2. Dynamically set all save paths
+        self.save_path = f"{self.run_dir}/cnn_transformer_model.pth"
+        self.label_encoder_path = f"{self.run_dir}/label_encoder_classes.npy"
+        self.calib_x_path = f"{self.run_dir}/calibration_X.npy"
+        self.calib_y_path = f"{self.run_dir}/calibration_y.npy"
+        self.model_info_path = f"{self.run_dir}/model_info.json"
+
+        # 3. Keep all your existing hyperparameters below
+        self.data_dir = "data/keypoints"                  
+        self.batch_size = 8                                 
+        self.num_workers = 0                                
+        self.lr = 0.0003                                    
+        self.weight_decay = 1e-5                            
+        self.epochs = 2                                     
+        self.num_classes = None                             
+        self.input_dim = 85                                 
+        self.hidden_dim = 256                               
+        self.num_layers = 4                                 
+        self.nhead = 8                                      
+        self.dropout = 0.4                                  
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")  
+        self.chunk_size = 40                                
+        self.overlap = 8                                   
+        self.max_sequence_length = 1500                      
+        self.augmentation_prob = 0.7                        
+        self.temporal_smooth_weight = 0.3                   
+        self.score_threshold = 0.25
 
 # Spatial Attention Module to focus on important keypoints
 class SpatialAttention(nn.Module):
-    def __init__(self):
+    def __init__(self, config): # Add config here
         super().__init__()
+        self.config = config
         self.attention = nn.Sequential(
             nn.Linear(4, 16),               
             nn.ReLU(),                      
-            nn.Linear(16, 1)                # Removed Softmax here to apply the explicit mask first
+            nn.Linear(16, 1)                
         )
         
     def forward(self, x, scores):
@@ -56,16 +71,19 @@ class SpatialAttention(nn.Module):
         # scores shape: (batch*seq_len, 17)
         
         # 1. HARD MASK: Zero out features of any joint with low confidence
-        mask = (scores < Config.score_threshold).unsqueeze(-1)  # Shape: (B, 17, 1)
+        mask = (scores < self.config.score_threshold).unsqueeze(-1)  # Shape: (B, 17, 1)
         x = x.masked_fill(mask, 0.0)
         
         # 2. SOFT ATTENTION: Calculate learned weights from the features
         attn_weights = self.attention(x).squeeze(-1)  # Shape: (B, 17)
         
         # 3. ATTENTION MASK: Force the network to ignore missing joints
-        # Setting the weight to -inf ensures Softmax turns it into exactly 0.0
-        attn_weights = attn_weights.masked_fill(scores < Config.score_threshold, float('-inf'))
+        attn_weights = attn_weights.masked_fill(scores < self.config.score_threshold, float('-inf'))
         attn_weights = torch.softmax(attn_weights, dim=1)  
+        
+        # FIX: Catch 0/0 NaNs (caused when ALL joints in a frame are masked out) 
+        # and convert them back to 0.0 before they poison the network
+        attn_weights = torch.nan_to_num(attn_weights, nan=0.0)
         
         return x * attn_weights.unsqueeze(-1)
 
@@ -122,6 +140,11 @@ class KeypointActivityDataset(Dataset):
                 self.labels.append(label)
                 self.sample_weights.append(self.class_weights[label])  
                 
+        # >>> ADD THESE TWO LINES AT THE VERY END OF __init__ <<<
+        # This converts the list of arrays into one highly-optimized NumPy array
+        self.data = np.array(self.data, dtype=np.float32)
+        self.labels = np.array(self.labels, dtype=np.int64) 
+                
     def chunk_sequence(self, sequence):
         chunks = []
         seq_len = len(sequence)
@@ -156,7 +179,9 @@ class KeypointActivityDataset(Dataset):
         return chunks
     
     def apply_augmentation(self, sample):
+        # sample is already a float32 array now, just convert to Tensor
         sample = torch.FloatTensor(sample)
+        
         if self.augment and random.random() < self.config.augmentation_prob:
             seq_len, feat_dim = sample.shape
             sample = sample.unsqueeze(0)
@@ -175,7 +200,12 @@ class KeypointActivityDataset(Dataset):
         return len(self.data)
     
     def __getitem__(self, idx):
-        sample = self.apply_augmentation(self.data[idx]) if self.augment else torch.FloatTensor(self.data[idx])
+        # >>> UPDATE THIS METHOD <<<
+        # Because self.data is already a float32 numpy array, we just slice it directly.
+        # No more "np.array()" casting inside the loop!
+        raw_data = self.data[idx] 
+        
+        sample = self.apply_augmentation(raw_data) if self.augment else torch.FloatTensor(raw_data)
         label = torch.LongTensor([self.labels[idx]])
         return sample, label
 
@@ -185,7 +215,7 @@ class CNNTransformerModel(nn.Module):
         super(CNNTransformerModel, self).__init__()
         self.config = config
         
-        self.spatial_attention = SpatialAttention()
+        self.spatial_attention = SpatialAttention(config)
         
         self.cnn = nn.Sequential(
             nn.Conv1d(1, 64, kernel_size=3, padding=1),      
@@ -291,16 +321,16 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 # Function to load and preprocess keypoint data
-def load_data(data_dir):
+def load_data(config):
     all_data = []
     all_labels = []
     all_subjects = [] # NEW: Keep track of who is in the video
     
-    activity_names = sorted(os.listdir(data_dir))
+    activity_names = sorted(os.listdir(config.data_dir))
     label_encoder = LabelEncoder()
     
     for activity in tqdm(activity_names, desc="Loading activities"):
-        activity_path = os.path.join(data_dir, activity)
+        activity_path = os.path.join(config.data_dir, activity)
         json_files = [f for f in os.listdir(activity_path) if f.endswith('_normalized.json')]
         
         for json_file in json_files:
@@ -342,7 +372,7 @@ def load_data(data_dir):
                     else:
                         velocity = kp - prev_kps
                         for i in range(17):
-                            if current_scores[i] < Config.score_threshold or prev_scores[i] < Config.score_threshold:
+                            if current_scores[i] < config.score_threshold or prev_scores[i] < config.score_threshold:
                                 velocity[i*2] = 0.0     
                                 velocity[i*2 + 1] = 0.0 
                         
@@ -358,18 +388,18 @@ def load_data(data_dir):
                     for kp, vel, s in zip(keypoints, velocities, scores_list)
                 ]
                 
-                if len(keypoints_with_velocity) > Config.max_sequence_length:
-                    keypoints_with_velocity = keypoints_with_velocity[:Config.max_sequence_length]
+                if len(keypoints_with_velocity) > config.max_sequence_length:
+                    keypoints_with_velocity = keypoints_with_velocity[:config.max_sequence_length]
                 
                 all_data.append(keypoints_with_velocity)
                 all_labels.append(activity)
                 all_subjects.append(subject_id) # NEW: Save the subject ID
     
     all_labels = label_encoder.fit_transform(all_labels)
-    Config.num_classes = len(label_encoder.classes_)
+    config.num_classes = len(label_encoder.classes_)
     
-    os.makedirs('cnn_transformer', exist_ok=True)
-    np.save('cnn_transformer/cnn_transformer_label_encoder_classes.npy', label_encoder.classes_)
+    os.makedirs(config.run_dir, exist_ok=True)
+    np.save(config.label_encoder_path, label_encoder.classes_)
     
     return np.array(all_data, dtype=object), np.array(all_labels), np.array(all_subjects), label_encoder
 
@@ -385,8 +415,8 @@ def train(model, train_loader, val_loader, config, test_loader=None):
     val_accuracies = []
     
     # Ensure directories exist
-    os.makedirs(os.path.dirname(config.save_path), exist_ok=True)
-    os.makedirs('cnn_transformer/results', exist_ok=True)
+    os.makedirs(config.run_dir, exist_ok=True)
+    os.makedirs(config.results_dir, exist_ok=True)
     
     for epoch in range(config.epochs):
         model.train()
@@ -451,7 +481,7 @@ def train(model, train_loader, val_loader, config, test_loader=None):
     plt.legend()
     plt.title('Accuracy Curve')
     
-    plt.savefig('cnn_transformer/results/training_curves.png')
+    plt.savefig(f'{config.results_dir}/training_curves.png')
     plt.close()
     
     print("Training complete. Evaluating final model...")
@@ -465,7 +495,7 @@ def train(model, train_loader, val_loader, config, test_loader=None):
         print(f"Final Test - Loss: {test_loss:.4f}, Accuracy: {test_acc:.4f}")
         
         confusion = evaluate_with_confusion(model, test_loader, config)
-        np.save('cnn_transformer/results/confusion_matrix.npy', confusion)
+        np.save(f'{config.results_dir}/confusion_matrix.npy', confusion)
         return model, confusion
     
     return model
@@ -547,8 +577,9 @@ def calculate_metrics(model, data_loader, config, phase="Validation"):
     class_precision, class_recall, class_f1, _ = precision_recall_fscore_support(all_labels, all_preds, average=None, zero_division=0)
     
     try:
-        class_names = np.load('cnn_transformer/cnn_transformer_label_encoder_classes.npy')
-    except:
+        # NEW DYNAMIC PATH
+        class_names = np.load(config.label_encoder_path)
+    except FileNotFoundError: # It's better to catch the specific error
         class_names = [f"Class {i}" for i in range(len(class_precision))]
         
     cm = confusion_matrix(all_labels, all_preds)
@@ -572,7 +603,7 @@ def calculate_metrics(model, data_loader, config, phase="Validation"):
     plt.ylabel('True')
     plt.title(f'{phase} Confusion Matrix (Normalized)')
     plt.tight_layout()
-    plt.savefig(f'cnn_transformer/results/{phase.lower()}_confusion_matrix.png')
+    plt.savefig(f'{config.results_dir}/{phase.lower()}_confusion_matrix.png')
     plt.close()
     
     report = classification_report(all_labels, all_preds, target_names=class_names, labels=np.arange(len(class_names)), zero_division=0)
@@ -590,7 +621,7 @@ def calculate_metrics(model, data_loader, config, phase="Validation"):
         'per_class_f1': class_f1.tolist(),
     }
     
-    np.save(f'cnn_transformer/results/{phase.lower()}_metrics.npy', metrics)
+    np.save(f'{config.results_dir}/{phase.lower()}_metrics.npy', metrics)
     return metrics
 
 # Main function
@@ -606,7 +637,7 @@ def main():
         
     print("Loading data...")
     # Receive the subject list from our updated load_data
-    X, y, subjects, label_encoder = load_data(config.data_dir)
+    X, y, subjects, label_encoder = load_data(config)
 
     classes = label_encoder.classes_
     class_counts = np.bincount(y)
@@ -623,7 +654,7 @@ def main():
     np.random.shuffle(unique_subjects)
     
     # Manually define the split (10 Train, 2 Val, 2 Calib, 3 Test)
-    train_subs = unique_subjects[9:10]
+    train_subs = unique_subjects[:2]
     val_subs = unique_subjects[10:12]
     calib_subs = unique_subjects[12:14]
     test_subs = unique_subjects[14:]
@@ -660,8 +691,8 @@ def main():
     # you just keep X_calib, y_calib saved for your future script.
     
     # Save the calibration data for future conformal prediction step
-    np.save('cnn_transformer/calibration_X.npy', np.array(X_calib, dtype=object))
-    np.save('cnn_transformer/calibration_y.npy', y_calib)
+    np.save(config.calib_x_path, np.array(X_calib, dtype=object))
+    np.save(config.calib_y_path, y_calib)
     
     weights = torch.DoubleTensor(train_dataset.sample_weights)
     sampler = torch.utils.data.WeightedRandomSampler(weights, len(weights), replacement=True)
@@ -685,13 +716,13 @@ def main():
     model_info = {
         'config': {k: v for k, v in config.__dict__.items() if not k.startswith('__') and not callable(v) and k != 'device'},
         'classes': list(label_encoder.classes_),
-        'label_encoder_path': 'cnn_transformer_label_encoder_classes.npy',
+        'label_encoder_path': config.label_encoder_path,
         'model_path': config.save_path,
         'input_dim': config.input_dim,
         'num_classes': config.num_classes,
     }
     
-    with open('cnn_transformer/model_info.json', 'w') as f:
+    with open(config.model_info_path, 'w') as f:
         serializable_info = {}
         for k, v in model_info.items():
             if isinstance(v, dict):
@@ -702,8 +733,7 @@ def main():
         json.dump(serializable_info, f, indent=2)
     
     print("Training completed successfully!")
-    print(f"Model saved to {config.save_path}")
-    print(f"Model info saved to cnn_transformer/model_info.json")
+    print(f"Results saved to: {config.run_dir}")
 
 if __name__ == "__main__":
     main()
