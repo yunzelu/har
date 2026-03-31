@@ -5,6 +5,7 @@ import numpy as np
 from pathlib import Path
 import sys
 import csv
+import json  # NEW: Added JSON import
 import time
 
 from my_training import CNNTransformerModel, Config 
@@ -26,8 +27,12 @@ class InferenceConfig(Config):
         # I/O Paths
         self.video_path = "WIN_20260326_15_06_23_Pro.mp4"  
         self.yolo_model_path = "yolo/yolo26n-pose.pt"
-        self.output_csv_path = "frame_predictions.csv" 
-        self.output_video_path = "WIN_20260326_15_06_23_Pro_RR.mp4" # NEW: Video output
+        
+        # COMMENTED OUT CSV
+        # self.output_csv_path = "frame_predictions.csv" 
+        # NEW: JSON Output path
+        self.output_json_path = "frame_predictions.json" 
+        self.output_video_path = "WIN_20260326_15_06_23_Pro_RR.mp4" 
         
         # YOLO Settings
         self.yolo_conf_threshold = 0.5
@@ -72,7 +77,6 @@ def extract_keypoints_from_video(config):
         results = yolo.model.track(source=frame, persist=True, verbose=False, conf=config.yolo_conf_threshold)
         frame_results = results[0]
         
-        # NEW: Render the YOLO skeleton directly onto the frame!
         annotated_frame = frame_results.plot()
         
         yolo_time = time.perf_counter() - start_yolo
@@ -94,7 +98,7 @@ def extract_keypoints_from_video(config):
             
         yield {
             'frame_idx': frame_idx,
-            'frame_image': annotated_frame, # We now pass the pre-drawn YOLO image
+            'frame_image': annotated_frame, 
             'track_id': target_id,
             'keypoints': raw_keypoints, 
             'scores': raw_scores,
@@ -109,7 +113,6 @@ def extract_keypoints_from_video(config):
     print("Video processing complete.")
 
 class PosePreprocessor:
-    # ... [Keep your exact same PosePreprocessor class here] ...
     def __init__(self, config):
         self.config = config
         self.frame_width = config.frame_width
@@ -174,7 +177,6 @@ class PosePreprocessor:
         return final_vector
     
 class SlidingWindowBuffer:
-    # ... [Keep your exact same SlidingWindowBuffer class here] ...
     def __init__(self, config):
         self.chunk_size = config.chunk_size 
         self.overlap = config.overlap 
@@ -217,7 +219,8 @@ def run_live_inference():
     
     # Trackers for drawing and timing
     all_frame_predictions = {}
-    frame_image_queue = [] # Small queue to hold images until inference is done
+    json_predictions = []  # NEW: JSON buffer
+    frame_image_queue = [] 
     video_writer = None
     
     # Timing statistics
@@ -258,12 +261,22 @@ def run_live_inference():
                 inputs = torch.FloatTensor(chunk_tensor).unsqueeze(0).to(config.device)
                 seq_outputs, frame_outputs = model(inputs)
                 
-                # --- NEW: GET OVERALL CHUNK PREDICTION ---
+                # --- GET OVERALL CHUNK PREDICTION ---
                 seq_probs = F.softmax(seq_outputs, dim=1).squeeze()
                 predicted_class_idx = torch.argmax(seq_probs).item()
                 chunk_action = class_names[predicted_class_idx]
                 chunk_confidence = seq_probs[predicted_class_idx].item()
                 
+                # --- NEW: APPEND TO JSON LIST ---
+                # We save this chunk as a sliding window event for the evaluator
+                json_predictions.append({
+                    "track_id": 1, # Evaluator ignores this now, but good to have a default
+                    "start_frame": int(chunk_frames[0]),
+                    "end_frame": int(chunk_frames[-1] + 1),
+                    "action": str(chunk_action),
+                    "confidence": float(chunk_confidence)
+                })
+
                 # --- PER-FRAME PREDICTIONS ---
                 frame_probs = F.softmax(frame_outputs, dim=2).squeeze(1) 
                 frame_class_indices = torch.argmax(frame_probs, dim=1).cpu().numpy()
@@ -297,7 +310,6 @@ def run_live_inference():
                         'frame_action': 'Analyzing...', 'frame_conf': 0.0
                     })
                     
-                    # --- NEW: DRAW BOTH LABELS ---
                     text_chunk = f"Chunk Action: {pred['chunk_action']} ({pred['chunk_conf']*100:.1f}%)"
                     text_frame = f"Frame Action: {pred['frame_action']} ({pred['frame_conf']*100:.1f}%)"
                     
@@ -338,19 +350,24 @@ def run_live_inference():
     if video_writer:
         video_writer.release()
 
-    # --- SAVE CSV (Updated to include Chunk data) ---
-    print(f"\nWriting predictions to {config.output_csv_path}...")
-    with open(config.output_csv_path, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Frame_Index', 'Chunk_Action', 'Chunk_Confidence', 'Frame_Action', 'Frame_Confidence'])
-        for f_idx in sorted(all_frame_predictions.keys()):
-            writer.writerow([
-                f_idx, 
-                all_frame_predictions[f_idx]['chunk_action'],
-                f"{all_frame_predictions[f_idx]['chunk_conf']:.4f}",
-                all_frame_predictions[f_idx]['frame_action'],
-                f"{all_frame_predictions[f_idx]['frame_conf']:.4f}"
-            ])
+    # --- SAVE CSV (Commented out) ---
+    # print(f"\nWriting predictions to {config.output_csv_path}...")
+    # with open(config.output_csv_path, mode='w', newline='') as file:
+    #     writer = csv.writer(file)
+    #     writer.writerow(['Frame_Index', 'Chunk_Action', 'Chunk_Confidence', 'Frame_Action', 'Frame_Confidence'])
+    #     for f_idx in sorted(all_frame_predictions.keys()):
+    #         writer.writerow([
+    #             f_idx, 
+    #             all_frame_predictions[f_idx]['chunk_action'],
+    #             f"{all_frame_predictions[f_idx]['chunk_conf']:.4f}",
+    #             all_frame_predictions[f_idx]['frame_action'],
+    #             f"{all_frame_predictions[f_idx]['frame_conf']:.4f}"
+    #         ])
+
+    # --- NEW: SAVE JSON FOR EVALUATOR ---
+    print(f"\nWriting JSON temporal segments to {config.output_json_path}...")
+    with open(config.output_json_path, 'w') as json_file:
+        json.dump(json_predictions, json_file, indent=4)
             
     # --- PROFILING REPORT ---
     avg_yolo = (total_yolo_time / frames_processed) * 1000 # convert to ms

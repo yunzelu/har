@@ -23,3 +23,5 @@ yolov8n-pose_openvino_model
 .venv
 
 training_outputs/
+
+ref/

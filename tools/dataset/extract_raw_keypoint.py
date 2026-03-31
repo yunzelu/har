@@ -117,7 +117,7 @@ def main():
     parser.add_argument('--output_render_dir', type=str, required=True, help='Directory to save the rendered images.')
     parser.add_argument('--output_json_dir', type=str, required=True, help='Root directory to save the output JSON files.')
     parser.add_argument('--activity_name', type=str, default=None, help='Name of the activity. If not provided, it is inferred from the input directory or zip file name.')
-    parser.add_argument('--model-path', type=str, default='yolo/yolo26m-pose.pt', help='Path to the YOLO model directory.')
+    parser.add_argument('--model-path', type=str, default='yolo/yolo26n-pose.pt', help='Path to the YOLO model directory.')
     parser.add_argument('--conf', type=float, default=0.1, help='Confidence threshold for detection.')
     
     args = parser.parse_args()
