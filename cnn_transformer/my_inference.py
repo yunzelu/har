@@ -24,17 +24,17 @@ class InferenceConfig(Config):
         super().__init__() 
         
         # I/O Paths
-        self.video_path = "test_video.mp4"  
+        self.video_path = "WIN_20260326_15_06_23_Pro.mp4"  
         self.yolo_model_path = "yolo/yolo26n-pose.pt"
         self.output_csv_path = "frame_predictions.csv" 
-        self.output_video_path = "test_video_rendered.mp4" # NEW: Video output
+        self.output_video_path = "WIN_20260326_15_06_23_Pro_RR.mp4" # NEW: Video output
         
         # YOLO Settings
         self.yolo_conf_threshold = 0.5
         
         # Video Dimensions
-        self.frame_width = 960
-        self.frame_height = 540
+        self.frame_width = 1920
+        self.frame_height = 1080
 
         self.training_output_dir = "2026-03-23_10-09-07"
 
@@ -258,13 +258,22 @@ def run_live_inference():
                 inputs = torch.FloatTensor(chunk_tensor).unsqueeze(0).to(config.device)
                 seq_outputs, frame_outputs = model(inputs)
                 
+                # --- NEW: GET OVERALL CHUNK PREDICTION ---
+                seq_probs = F.softmax(seq_outputs, dim=1).squeeze()
+                predicted_class_idx = torch.argmax(seq_probs).item()
+                chunk_action = class_names[predicted_class_idx]
+                chunk_confidence = seq_probs[predicted_class_idx].item()
+                
                 # --- PER-FRAME PREDICTIONS ---
                 frame_probs = F.softmax(frame_outputs, dim=2).squeeze(1) 
                 frame_class_indices = torch.argmax(frame_probs, dim=1).cpu().numpy()
                 frame_confidences = torch.max(frame_probs, dim=1)[0].cpu().numpy()
                 
                 for i, f_idx in enumerate(chunk_frames):
+                    # Save both chunk and frame data into the dictionary
                     all_frame_predictions[f_idx] = {
+                        'chunk_action': chunk_action,
+                        'chunk_conf': chunk_confidence,
                         'frame_action': class_names[frame_class_indices[i]],
                         'frame_conf': frame_confidences[i]
                     }
@@ -274,8 +283,6 @@ def run_live_inference():
                 total_inf_time += inf_time
                 
                 # --- RENDER AND WRITE OUT FRAMES ---
-                # Because the buffer stepped forward, the oldest `step_size` (32) frames 
-                # will never be updated again. We can safely draw them and drop them from memory!
                 frames_to_write = buffer.step_size 
                 
                 for _ in range(frames_to_write):
@@ -284,19 +291,25 @@ def run_live_inference():
                         
                     q_idx, q_img = frame_image_queue.pop(0)
                     
-                    # Look up the prediction (Default to Unknown if model hasn't predicted it)
-                    pred = all_frame_predictions.get(q_idx, {'frame_action': 'Analyzing...', 'frame_conf': 0.0})
+                    # Look up the prediction (Default to Unknown)
+                    pred = all_frame_predictions.get(q_idx, {
+                        'chunk_action': 'Analyzing...', 'chunk_conf': 0.0,
+                        'frame_action': 'Analyzing...', 'frame_conf': 0.0
+                    })
                     
-                    # Draw Top-Left Exact Frame Action
-                    text = f"Action: {pred['frame_action']} ({pred['frame_conf']*100:.1f}%)"
-                    # Black background box for readable text
-                    cv2.rectangle(q_img, (10, 10), (450, 60), (0, 0, 0), -1)
-                    # Yellow Text
-                    cv2.putText(q_img, text, (20, 45), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
+                    # --- NEW: DRAW BOTH LABELS ---
+                    text_chunk = f"Chunk Action: {pred['chunk_action']} ({pred['chunk_conf']*100:.1f}%)"
+                    text_frame = f"Frame Action: {pred['frame_action']} ({pred['frame_conf']*100:.1f}%)"
+                    
+                    # Taller black background box to fit two lines
+                    cv2.rectangle(q_img, (10, 10), (550, 100), (0, 0, 0), -1)
+                    
+                    # Draw Chunk (Green) and Frame (Yellow) text
+                    cv2.putText(q_img, text_chunk, (20, 45), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
+                    cv2.putText(q_img, text_frame, (20, 85), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
                     
                     video_writer.write(q_img)
             else:
-                # Accumulate time even when the buffer hasn't triggered inference yet
                 inf_time = time.perf_counter() - start_inf
                 total_inf_time += inf_time
                 
@@ -305,27 +318,36 @@ def run_live_inference():
                 print(f"Processed {frames_processed} frames...")
 
     # --- END OF VIDEO CLEANUP ---
-    # Drain any remaining frames left in the queue (the final overlap tail)
     print("Flushing remaining frames to video...")
     while frame_image_queue:
         q_idx, q_img = frame_image_queue.pop(0)
-        pred = all_frame_predictions.get(q_idx, {'frame_action': 'Finished', 'frame_conf': 0.0})
-        text = f"Action: {pred['frame_action']} ({pred['frame_conf']*100:.1f}%)"
-        cv2.rectangle(q_img, (10, 10), (450, 60), (0, 0, 0), -1)
-        cv2.putText(q_img, text, (20, 45), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
+        pred = all_frame_predictions.get(q_idx, {
+            'chunk_action': 'Finished', 'chunk_conf': 0.0,
+            'frame_action': 'Finished', 'frame_conf': 0.0
+        })
+        
+        text_chunk = f"Chunk Action: {pred['chunk_action']} ({pred['chunk_conf']*100:.1f}%)"
+        text_frame = f"Frame Action: {pred['frame_action']} ({pred['frame_conf']*100:.1f}%)"
+        
+        cv2.rectangle(q_img, (10, 10), (550, 100), (0, 0, 0), -1)
+        cv2.putText(q_img, text_chunk, (20, 45), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
+        cv2.putText(q_img, text_frame, (20, 85), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
+        
         video_writer.write(q_img)
 
     if video_writer:
         video_writer.release()
 
-    # --- SAVE CSV ---
+    # --- SAVE CSV (Updated to include Chunk data) ---
     print(f"\nWriting predictions to {config.output_csv_path}...")
     with open(config.output_csv_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Frame_Index', 'Frame_Action', 'Frame_Confidence'])
+        writer.writerow(['Frame_Index', 'Chunk_Action', 'Chunk_Confidence', 'Frame_Action', 'Frame_Confidence'])
         for f_idx in sorted(all_frame_predictions.keys()):
             writer.writerow([
                 f_idx, 
+                all_frame_predictions[f_idx]['chunk_action'],
+                f"{all_frame_predictions[f_idx]['chunk_conf']:.4f}",
                 all_frame_predictions[f_idx]['frame_action'],
                 f"{all_frame_predictions[f_idx]['frame_conf']:.4f}"
             ])
