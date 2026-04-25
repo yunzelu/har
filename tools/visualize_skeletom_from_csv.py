@@ -5,19 +5,35 @@ import pandas as pd
 from tqdm import tqdm
 from ultralytics.utils.plotting import Annotator, colors
 
-def render_skeletons_from_csv(csv_path, video_out, view_size=(1920, 1080), fps=30):
+def render_skeletons_from_csv(csv_path, image_path, video_out, view_size=(1920, 1080), fps=30):
     # 1. Read the CSV data
     df = pd.read_csv(csv_path)
     
+    # Check if the new bounding box columns exist in this CSV
+    bbox_cols = ['BBox_X1', 'BBox_Y1', 'BBox_X2', 'BBox_Y2']
+    has_bbox_cols = all(col in df.columns for col in bbox_cols)
+    
     # Sort by UnixTime to ensure chronological frame rendering
-    df = df.sort_values(by='UnixTime')
+    if 'UnixTime' in df.columns:
+        df = df.sort_values(by='UnixTime')
     
     # Group by timestamps to act as our frame sequences
-    unique_timestamps = df[['Timestamp', 'UnixTime']].drop_duplicates()
+    cols_to_extract = []
+    if 'Timestamp' in df.columns: cols_to_extract.append('Timestamp')
+    if 'UnixTime' in df.columns: cols_to_extract.append('UnixTime')
+    
+    unique_timestamps = df[cols_to_extract].drop_duplicates()
     
     # Configuration
     w, h = view_size
-    padding = 25  # Internal padding for the bounding box
+    padding = 0  # Internal padding for the bounding box
+
+    bg_original = cv2.imread(image_path)
+    if bg_original is None:
+        raise FileNotFoundError(f"Could not load background image at {image_path}")
+    
+    # Resize image to match the video dimensions
+    bg_resized = cv2.resize(bg_original, (w, h))
     
     # 2. Setup VideoWriter
     out = cv2.VideoWriter(video_out, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
@@ -27,20 +43,24 @@ def render_skeletons_from_csv(csv_path, video_out, view_size=(1920, 1080), fps=3
 
     # 3. Iterate through frames with a progress bar
     for _, row in tqdm(unique_timestamps.iterrows(), total=len(unique_timestamps), desc="Rendering frames"):
-        timestamp = row['Timestamp']
-        unix_time = row['UnixTime']
+        # Safely grab the dual timestamps
+        timestamp = row.get('Timestamp', '')
+        unix_time = row.get('UnixTime', 0.0)
         
         # Create a blank black frame
-        frame = np.zeros((h, w, 3), dtype=np.uint8)
+        frame = bg_resized.copy()
         
         # Initialize YOLO annotator
         annotator = Annotator(frame, line_width=2, example=str("person"))
         
-        # Get all people present in this specific frame/timestamp
-        people_in_frame = df[df['UnixTime'] == unix_time]
+        # Get all people present in this specific frame
+        if 'UnixTime' in df.columns:
+            people_in_frame = df[df['UnixTime'] == unix_time]
+        else:
+            people_in_frame = df[df['Timestamp'] == timestamp]
         
         for _, person in people_in_frame.iterrows():
-            pid = int(person['PersonID'])
+            pid = int(person.get('ID', person.get('PersonID', 0)))
             
             # Extract keypoints into shape (17, 3) -> [x, y, conf]
             kpts_data = []
@@ -53,39 +73,59 @@ def render_skeletons_from_csv(csv_path, video_out, view_size=(1920, 1080), fps=3
                 
             kpts_array = np.array(kpts_data, dtype=np.float32)
             
-            # 4. Compute Bounding Box from valid keypoints
-            # Filter out keypoints with very low confidence (e.g., < 0.2) to prevent box skewing
-            valid_kpts = kpts_array[kpts_array[:, 2] > 0.2]
+            # 4. Compute or Read Bounding Box
+            box = None
             
-            if len(valid_kpts) > 0:
-                min_x = np.min(valid_kpts[:, 0])
-                min_y = np.min(valid_kpts[:, 1])
-                max_x = np.max(valid_kpts[:, 0])
-                max_y = np.max(valid_kpts[:, 1])
-                
-                # Apply padding and clamp to the configured canvas boundaries
+            if has_bbox_cols and not pd.isna(person['BBox_X1']):
                 box = [
-                    max(0, int(min_x - padding)),
-                    max(0, int(min_y - padding)),
-                    min(w, int(max_x + padding)),
-                    min(h, int(max_y + padding))
+                    int(person['BBox_X1']),
+                    int(person['BBox_Y1']),
+                    int(person['BBox_X2']),
+                    int(person['BBox_Y2'])
                 ]
+            else:
+                valid_kpts = kpts_array[kpts_array[:, 2] > 0.2]
                 
-                # Draw the generated Bounding Box and ID
+                if len(valid_kpts) > 0:
+                    min_x = np.min(valid_kpts[:, 0])
+                    min_y = np.min(valid_kpts[:, 1])
+                    max_x = np.max(valid_kpts[:, 0])
+                    max_y = np.max(valid_kpts[:, 1])
+                    
+                    box = [
+                        max(0, int(min_x - padding)),
+                        max(0, int(min_y - padding)),
+                        min(w, int(max_x + padding)),
+                        min(h, int(max_y + padding))
+                    ]
+            
+            if box is not None:
                 annotator.box_label(box, f"ID: {pid}", color=colors(pid, True))
             
             # 5. Draw the native YOLO skeleton
-            # Convert keypoints to tensor for the annotator
             kpts_tensor = torch.tensor(kpts_array)
             annotator.kpts(kpts_tensor, shape=(h, w), kpt_line=True)
             
         # Get the annotated frame
         final_frame = annotator.result()
         
-        # 6. Add Timestamp and UnixTime to the top-left corner
+        # 6. Add Timestamp and UnixTime to the BOTTOM-RIGHT corner
         text_str = f"Time: {timestamp} | Unix: {unix_time}"
-        cv2.putText(final_frame, text_str, (15, 40), cv2.FONT_HERSHEY_SIMPLEX, 
-                    1.0, (255, 255, 255), 2, cv2.LINE_AA)
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 0.5   # Scaled down from 1.0
+        thickness = 1      # Scaled down from 2
+        
+        # Calculate the size of the text to offset it from the bottom-right edges
+        text_size, _ = cv2.getTextSize(text_str, font, font_scale, thickness)
+        text_w, text_h = text_size
+        
+        # Set a 15-pixel margin from the bottom and right edges
+        margin = 15
+        text_x = margin
+        text_y = h - margin
+        
+        cv2.putText(final_frame, text_str, (text_x, text_y), font, 
+                    font_scale, (255, 255, 255), thickness, cv2.LINE_AA)
         
         out.write(final_frame)
         
@@ -94,8 +134,9 @@ def render_skeletons_from_csv(csv_path, video_out, view_size=(1920, 1080), fps=3
 
 if __name__ == "__main__":
     render_skeletons_from_csv(
-        csv_path="data/Elaine/12-12.csv",
-        video_out="data/Elaine/12-12.mp4",
-        view_size=(1920, 1080),
+        csv_path="data/Willowbend/pose_2026-04-17_310_t_p.csv",
+        image_path="data/Willowbend/310_room.jpg",
+        video_out="data/Willowbend/310_17t.mp4",
+        view_size=(1280, 720),
         fps=30
     )
