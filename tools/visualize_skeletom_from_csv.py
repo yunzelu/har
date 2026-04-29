@@ -99,7 +99,7 @@ def render_skeletons_from_csv(csv_path, image_path, video_out, view_size=(1920, 
                         min(h, int(max_y + padding))
                     ]
             
-            if box is not None:
+            if box is not None and pid != -1:
                 annotator.box_label(box, f"ID: {pid}", color=colors(pid, True))
             
             # 5. Draw the native YOLO skeleton
@@ -134,9 +134,9 @@ def render_skeletons_from_csv(csv_path, image_path, video_out, view_size=(1920, 
 
 if __name__ == "__main__":
     render_skeletons_from_csv(
-        csv_path="data/Willowbend/pose_2026-04-17_310_t_p.csv",
+        csv_path="data/Willowbend/pose_2026-04-17_310_p.csv",
         image_path="data/Willowbend/310_room.jpg",
-        video_out="data/Willowbend/310_17t.mp4",
+        video_out="data/Willowbend/310_17.mp4",
         view_size=(1280, 720),
         fps=30
     )

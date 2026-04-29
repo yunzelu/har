@@ -14,7 +14,7 @@ activity_results*.json
 
 .vscode
 
-yolov8n-pose_openvino_model
+yolo*_openvino_model
 
 *.csv
 
