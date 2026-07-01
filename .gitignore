@@ -25,3 +25,7 @@ yolo*_openvino_model
 training_outputs/
 
 ref/
+
+runs/
+
+*.zip

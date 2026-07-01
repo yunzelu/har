@@ -6,7 +6,7 @@ from ultralytics import YOLO
 # --- CONFIGURATION ---
 WEBCAM_INDEX = 0      
 IMGSZ = (352, 640)          
-MODEL_PATH = r"yolo/yolo_openvino_352x640_openvino_model"
+MODEL_PATH = r"yolo/yolo11s_openvino_352x640_openvino_model"
 
 # --- RENDERING CONFIG ---
 SKELETON_EDGES = [

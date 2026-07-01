@@ -1,15 +1,20 @@
 import cv2
 import numpy as np
 import time
+import os # NEW: Added to help name the output file
 from ultralytics import YOLO
+from collections import deque
 
 # --- CONFIGURATION ---
-VIDEO_PATH = r"yolo\Cook.Cleandishes_p06_r03_v13_c06.mp4"  # NEW: Path to your video file
+VIDEO_PATH = r"data\WIN_20260326_15_06_23_Pro_trim.mp4"  
 IMGSZ = (352, 640)          
-MODEL_PATH = r"yolo/yolo_openvino_352x640_openvino_model"
+MODEL_PATH = r"yolo\yolo11s-pose_352x640_openvino_model"
+
+# NEW: Automatically create an output name (e.g., video_output.mp4)
+filename, ext = os.path.splitext(VIDEO_PATH)
+OUTPUT_PATH = f"{filename}_yolo11m_448_.mp4"
 
 # --- RENDERING CONFIG ---
-# (Keep SKELETON_EDGES and KPT_VISIBILITY_THRESHOLD exactly the same)
 SKELETON_EDGES = [
     (0, 1), (0, 2), (1, 3), (2, 4),  # Head
     (5, 6), (5, 7), (7, 9), (6, 8), (8, 10),  # Arms
@@ -141,37 +146,51 @@ def run_live_viewer():
         print(f"[ERROR] Failed to load model: {e}")
         return
 
-    # CHANGE 1: Use the video file path instead of WEBCAM_INDEX
     cap = cv2.VideoCapture(VIDEO_PATH)
-
-    # CHANGE 2: Removed webcam-specific settings (FOURCC, FPS override)
-    # The video file already has these properties embedded.
-    
-    # We will keep your desired display dimensions
-    disp_w, disp_h = 1280, 720
 
     if not cap.isOpened():
         print(f"[ERROR] Video file not found at: {VIDEO_PATH}")
         return
 
-    print("[INFO] Video playback started. Press 'q' to quit.")
+    # Get the original video frames per second (FPS)
+    video_fps = cap.get(cv2.CAP_PROP_FPS)
+    if video_fps == 0:
+        video_fps = 30 # Default if the system cannot read it
+
+    # We will keep your desired display dimensions
+    disp_w, disp_h = 1280, 720
+
+    # NEW: Set up the Video Writer to save the file
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v') # Format for .mp4 files
+    out = cv2.VideoWriter(OUTPUT_PATH, fourcc, video_fps, (disp_w, disp_h))
+
+    print(f"[INFO] Video playback started. Saving to: {OUTPUT_PATH}")
+    print("[INFO] Press 'q' to quit early.")
 
     scale_x = disp_w / IMGSZ[1]
     scale_y = disp_h / IMGSZ[0]
 
-    prev_time = 0 
+    prev_time = time.time() 
+    fps_buffer = deque(maxlen=30) # Stores up to 30 FPS values
 
     while True:
         success, frame = cap.read()
         
-        # CHANGE 3: Stop smoothly when the video ends
         if not success:
             print("[INFO] End of video reached.")
             break
 
         current_time = time.time()
-        fps = 1.0 / (current_time - prev_time) if prev_time > 0 else 0.0
+        time_diff = current_time - prev_time
+        
+        if time_diff > 0:
+            current_fps = 1.0 / time_diff
+            fps_buffer.append(current_fps) # Add new FPS to the list
+            
         prev_time = current_time
+
+        # Calculate the average of the last 30 frames
+        smooth_fps = sum(fps_buffer) / len(fps_buffer) if len(fps_buffer) > 0 else 0.0
 
         # 1. Down-sample
         small_frame = cv2.resize(frame, (IMGSZ[1], IMGSZ[0]))
@@ -192,16 +211,22 @@ def run_live_viewer():
         display_frame = draw_transparent_skeletons(display_frame, results, scale_x, scale_y)
 
         # 4. Draw HUD
-        display_frame = draw_hud_overlay(display_frame, results, fps)
+        display_frame = draw_hud_overlay(display_frame, results, smooth_fps)
+
+        # NEW: Write this frame to the output video file
+        out.write(display_frame)
 
         cv2.imshow("InvisiGuard Video View", display_frame)
 
-        # Optional: Add a short delay to play at normal speed, otherwise it processes as fast as your CPU/GPU allows
+        # Optional: Add a short delay to play at normal speed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+    # NEW: Release the video writer to finish saving the file properly
+    out.release()
     cap.release()
     cv2.destroyAllWindows()
+    print("[INFO] Video saved successfully!")
 
 if __name__ == "__main__":
     run_live_viewer()
